@@ -1,9 +1,10 @@
-package com.project.user.service.services.impl;
+package com.project.user.services.impl;
 
-import com.project.user.service.entities.UserEntity;
-import com.project.user.service.exceptions.ResourceNotFoundException;
-import com.project.user.service.repositories.UserRepository;
-import com.project.user.service.services.UserService;
+import com.project.user.entities.UserEntity;
+import com.project.user.exceptions.ResourceNotFoundException;
+import com.project.user.repositories.UserRepository;
+import com.project.user.services.UserService;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,5 +45,21 @@ public class UserImpl implements UserService {
     @Override
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        if (StringUtils.isBlank(username)) {
+            return false;
+        }
+        return userRepository.existsByUsernameIgnoreCase(username);
+    }
+
+    @Override
+    public boolean existsByUserId(String userId) {
+        if (StringUtils.isBlank(userId)) {
+            return false;
+        }
+        return userRepository.existsByUserIdIgnoreCase(userId);
     }
 }

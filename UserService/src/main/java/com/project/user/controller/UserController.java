@@ -1,8 +1,9 @@
-package com.project.user.service.controller;
+package com.project.user.controller;
 
-import com.project.user.service.entities.UserEntity;
-import com.project.user.service.payload.ApiResponse;
-import com.project.user.service.services.UserService;
+import com.project.user.entities.UserEntity;
+import com.project.user.exceptions.ResourceNotFoundException;
+import com.project.user.payload.ApiResponse;
+import com.project.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<UserEntity>> getUserById(@PathVariable String userId) {
+    public ResponseEntity<ApiResponse<UserEntity>> getUserById(@PathVariable String userId) throws ResourceNotFoundException {
         UserEntity user = userService.getUserById(userId);
         return ResponseEntity.ok(
                 ApiResponse
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserEntity>>> getAllUsers() {
+    public ResponseEntity<ApiResponse<List<UserEntity>>> getAllUsers() throws ResourceNotFoundException {
         List<UserEntity> allUsers = userService.getAllUsers();
         return ResponseEntity.ok(
                 ApiResponse
@@ -44,6 +45,10 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<UserEntity>> createUser(@RequestBody UserEntity user) {
+        final boolean usernameExists = userService.existsByUsername(user.getUsername());
+        if(!usernameExists) {
+            throw new ResourceNotFoundException("User already exists with username: " + user.getUsername());
+        }
         UserEntity createUser = userService.createUser(user);
         return ResponseEntity.ok(
                 ApiResponse
@@ -55,4 +60,20 @@ public class UserController {
         );
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponse<UserEntity>> deleteUser(@PathVariable String userId) throws  ResourceNotFoundException {
+        final boolean userExists = userService.existsByUserId(userId);
+        if(!userExists) {
+            throw new ResourceNotFoundException("User not found with ID: " + userId);
+        }
+        UserEntity deleteUser = userService.deleteUser(userId);
+        return ResponseEntity.ok(
+                ApiResponse
+                        .<UserEntity>builder()
+                        .success(true)
+                        .message("User with ID " + userId + " deleted successfully")
+                        .entity(deleteUser)
+                        .build()
+        );
+    }
 }

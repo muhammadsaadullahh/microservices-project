@@ -1,4 +1,4 @@
-package com.project.user.service.payload;
+package com.project.user.payload;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -1,6 +1,6 @@
-package com.project.user.service.services;
+package com.project.user.services;
 
-import com.project.user.service.entities.UserEntity;
+import com.project.user.entities.UserEntity;
 
 import java.util.List;
 
@@ -11,4 +11,6 @@ public interface UserService {
     UserEntity deleteUser(String id);
     UserEntity getUserById(String id);
     List<UserEntity> getAllUsers();
+    boolean existsByUsername(String username);
+    boolean existsByUserId(String userId);
 }
