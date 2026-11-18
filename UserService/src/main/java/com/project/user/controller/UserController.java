@@ -46,7 +46,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<ApiResponse<UserEntity>> createUser(@RequestBody UserEntity user) {
         final boolean usernameExists = userService.existsByUsername(user.getUsername());
-        if(!usernameExists) {
+        if(usernameExists) {
             throw new ResourceNotFoundException("User already exists with username: " + user.getUsername());
         }
         UserEntity createUser = userService.createUser(user);
