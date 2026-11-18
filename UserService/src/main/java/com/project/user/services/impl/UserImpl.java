@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserImpl implements UserService {
@@ -18,7 +19,7 @@ public class UserImpl implements UserService {
 
     @Override
     public UserEntity createUser(UserEntity user) {
-        user.setUserId(java.util.UUID.randomUUID().toString());
+        user.setUserId(UUID.randomUUID().toString());
         return userRepository.save(user);
     }
 
@@ -31,7 +32,6 @@ public class UserImpl implements UserService {
     public UserEntity deleteUser(String id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-
         userRepository.delete(user);
         return user;
     }
